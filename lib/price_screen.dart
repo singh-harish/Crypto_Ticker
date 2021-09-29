@@ -4,6 +4,8 @@ import 'coin_data.dart';
 import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
+  const PriceScreen({Key? key}) : super(key: key);
+
   @override
   _PriceScreenState createState() => _PriceScreenState();
 }
@@ -57,10 +59,10 @@ class _PriceScreenState extends State<PriceScreen> {
   bool iswaiting = false;
 
   void getData() async {
-    iswaiting=true;
+    iswaiting = true;
     try {
       var data = await CoinData().getCoinData(selectedCurrency);
-      iswaiting=false;
+      iswaiting = false;
       setState(() {
         coinValues = data;
       });
@@ -75,43 +77,48 @@ class _PriceScreenState extends State<PriceScreen> {
     getData();
   }
 
+  Column makeCards() {
+    List<CryptoCard> cryptoCards = [];
+    for (String crypto in cryptoList) {
+      cryptoCards.add(
+        CryptoCard(
+          cryptoCurrency: crypto,
+          selectedCurrency: selectedCurrency,
+          value: iswaiting ? '?' : coinValues[crypto],
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: cryptoCards,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crypto Ticker'),
+        title: const Text('Crypto Ticker'),
         centerTitle: true,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              CryptoCard(
-                cryptoCurrency: 'BTC',
-                value: iswaiting ? '?' : coinValues['BTC'],
-                selectedCurrency: selectedCurrency,
-              ),
-              CryptoCard(
-                cryptoCurrency: 'ETH',
-                value: iswaiting ? '?' : coinValues['ETH'],
-                selectedCurrency: selectedCurrency,
-              ),
-              CryptoCard(
-                cryptoCurrency: 'LTC',
-                value: iswaiting ? '?' : coinValues['LTC'],
-                selectedCurrency: selectedCurrency,
-              ),
-            ],
-          ),
+          makeCards(),
           Container(
             height: 150.0,
             alignment: Alignment.center,
-            padding: EdgeInsets.only(bottom: 30.0),
-            color: Colors.lightBlue,
-            child: androidDropdown(),
+            padding: const EdgeInsets.only(bottom: 30.0),
+            //color: Colors.lightBlue,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [Colors.yellow,Colors.teal],
+                ),
+            ),
+            child: Platform.isIOS ? iOSPicker() : androidDropdown(),
           ),
         ],
       ),
@@ -119,8 +126,9 @@ class _PriceScreenState extends State<PriceScreen> {
   }
 }
 
+
 class CryptoCard extends StatelessWidget {
-  const CryptoCard({this.value, this.cryptoCurrency, this.selectedCurrency});
+   const CryptoCard({this.value, this.cryptoCurrency, this.selectedCurrency});
 
   final String? value;
   final String? selectedCurrency;
@@ -129,7 +137,7 @@ class CryptoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+      padding: const EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
       child: Card(
         color: Colors.lightBlueAccent,
         elevation: 5.0,
@@ -137,11 +145,11 @@ class CryptoCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+          padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
           child: Text(
             '1 $cryptoCurrency = $value $selectedCurrency',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20.0,
               color: Colors.white,
             ),
