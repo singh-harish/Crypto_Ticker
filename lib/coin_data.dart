@@ -34,7 +34,7 @@ const List<String> cryptoList = [
 ];
 
 const coinAPIURL = 'https://rest.coinapi.io/v1/exchangerate';
-const apiKey = 'E75B854F-66A1-4271-B682-2A1E96960CF6';
+const apiKey = 'API-KEY'; // for ref: E75B854F-66A1-4271-B682-2A1E96960CF6
 
 class CoinData {
   Future getCoinData(String? selectedeCurrency) async {
@@ -50,7 +50,7 @@ class CoinData {
         cryptoPrices[crypto] = lastPrice.toStringAsFixed(0);
       } 
       else {
-        print(response.statusCode);
+        print(response.statusCode);   // debug console , if #429 means 100 req limit exceeded.
         throw 'Problem with the get request';
       }
     }
